@@ -16,6 +16,7 @@ async function run() {
         await client.connect();
 
         const partsCollection = client.db("revo_parts").collection("parts");
+        const ordersCollection = client.db("revo_parts").collection("orders");
 
         app.get('/part', async (req, res) => {
             const query = {};
@@ -43,6 +44,12 @@ async function run() {
             };
             const result = await partsCollection.updateOne(filter, updateDoc, options);
             res.send(result);
+        });
+
+        app.post('/purchase', async (req, res) => {
+            const purchase = req.body;
+            const result = await ordersCollection.insertOne(purchase);
+            return res.send({ success: true, result });
         });
     }
     finally {
