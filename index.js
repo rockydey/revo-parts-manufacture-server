@@ -69,7 +69,21 @@ async function run() {
             }
             const result = await usersCollection.insertOne(newUser);
             return res.send({ success: true, result });
-        })
+        });
+
+        app.get('/user', async (req, res) => {
+            const query = {};
+            const cursor = usersCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        });
+
+        app.get('/purchase', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const purchase = await ordersCollection.find(query).toArray();
+            res.send(purchase);
+        });
     }
     finally {
 
