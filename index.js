@@ -17,6 +17,7 @@ async function run() {
 
         const partsCollection = client.db("revo_parts").collection("parts");
         const ordersCollection = client.db("revo_parts").collection("orders");
+        const usersCollection = client.db("revo_parts").collection("users");
 
         app.get('/part', async (req, res) => {
             const query = {};
@@ -51,6 +52,24 @@ async function run() {
             const result = await ordersCollection.insertOne(purchase);
             return res.send({ success: true, result });
         });
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const filter = {
+                email: user.email
+            };
+            const newUser = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            };
+            const exits = await ordersCollection.findOne(filter);
+            if (exits) {
+                return res.send({ success: false, booking: exits });
+            }
+            const result = await usersCollection.insertOne(newUser);
+            return res.send({ success: true, result });
+        })
     }
     finally {
 
