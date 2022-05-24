@@ -18,6 +18,7 @@ async function run() {
         const partsCollection = client.db("revo_parts").collection("parts");
         const ordersCollection = client.db("revo_parts").collection("orders");
         const usersCollection = client.db("revo_parts").collection("users");
+        const reviewsCollection = client.db("revo_parts").collection("reviews");
 
         app.get('/part', async (req, res) => {
             const query = {};
@@ -89,6 +90,12 @@ async function run() {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await ordersCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
             res.send(result);
         });
     }
