@@ -50,6 +50,14 @@ async function run() {
 
         app.post('/purchase', async (req, res) => {
             const purchase = req.body;
+            const filter = {
+                email: purchase.email,
+                productName: purchase.productName
+            };
+            const exits = await ordersCollection.findOne(filter);
+            if (exits) {
+                return res.send({ success: false, booking: exits });
+            }
             const result = await ordersCollection.insertOne(purchase);
             return res.send({ success: true, result });
         });
@@ -64,7 +72,7 @@ async function run() {
                 email: user.email,
                 phone: user.phone
             };
-            const exits = await ordersCollection.findOne(filter);
+            const exits = await usersCollection.findOne(filter);
             if (exits) {
                 return res.send({ success: false, booking: exits });
             }
@@ -98,6 +106,26 @@ async function run() {
             const result = await reviewsCollection.insertOne(review);
             res.send(result);
         });
+
+        app.put('/user', async (req, res) => {
+            const user = req.body;
+            const filter = {
+                email: user.email
+            };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
+
+        app.get('/order', async (req, res) => {
+            const query = {};
+            const cursor = ordersCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        })
     }
     finally {
 
