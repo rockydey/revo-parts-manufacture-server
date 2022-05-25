@@ -188,6 +188,20 @@ async function run() {
             res.send(updatedOrder);
         });
 
+        app.put('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const approve = req.body;
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    approve: approve.approve
+                }
+            };
+            const updatedOrder = await ordersCollection.updateOne(filter, updateDoc, options);
+            res.send(updatedOrder);
+        });
+
         app.delete("/purchase/:id", verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
