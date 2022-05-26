@@ -284,11 +284,18 @@ async function run() {
 
         });
 
-        app.get('/managePart', async (req, res) => {
+        app.get('/managePart', verifyJWT, verifyAdmin, async (req, res) => {
             const query = {};
             const cursor = partsCollection.find(query);
             const manageParts = await cursor.toArray();
             res.send(manageParts);
+        });
+
+        app.delete('/managePart/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await partsCollection.deleteOne(filter);
+            res.send(result);
         });
     }
     finally {
