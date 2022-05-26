@@ -261,7 +261,14 @@ async function run() {
             const cursor = reviewsCollection.find(query);
             const reviews = await cursor.toArray();
             res.send(reviews);
-        })
+        });
+
+        app.post("/part", verifyJWT, verifyAdmin, async (req, res) => {
+            const part = req.body;
+            const result = await partsCollection.insertOne(part);
+            res.send(result);
+
+        });
     }
     finally {
 
