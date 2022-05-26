@@ -255,6 +255,13 @@ async function run() {
                 clientSecret: paymentIntent.client_secret,
             });
         });
+
+        app.get('/review', verifyJWT, async (req, res) => {
+            const query = {};
+            const cursor = reviewsCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
     }
     finally {
 
