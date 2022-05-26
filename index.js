@@ -108,6 +108,20 @@ async function run() {
             res.send(result);
         });
 
+        app.put('/update/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const update = req.body;
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    quantity: update.quantity
+                }
+            };
+            const result = await partsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
+
         app.post('/purchase', verifyJWT, async (req, res) => {
             const purchase = req.body;
             const filter = {
@@ -268,6 +282,13 @@ async function run() {
             const result = await partsCollection.insertOne(part);
             res.send(result);
 
+        });
+
+        app.get('/managePart', async (req, res) => {
+            const query = {};
+            const cursor = partsCollection.find(query);
+            const manageParts = await cursor.toArray();
+            res.send(manageParts);
         });
     }
     finally {
